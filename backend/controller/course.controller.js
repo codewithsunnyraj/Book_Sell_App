@@ -80,7 +80,7 @@ export const updateCourse = async (req, res) => {
         description,
         price,
         image: {
-          public_id: image?.public_id ,
+          public_id: image?.public_id,
           url: image?.url,
         },
       }
@@ -101,3 +101,32 @@ export const updateCourse = async (req, res) => {
   }
 };
 /** Update course end */
+
+/** Delete course section start */
+export const deleteCourse = async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const course = await Course.findOneAndDelete({ _id: courseId });
+    if (!course) {
+      return res
+        .status(404)
+        .json({ message: "Course Not Found", success: false });
+    }
+    res.status(200).json({
+      message: "Course Deleted Successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      message: "Error while deleting course",
+      success: false,
+    });
+  }
+};
+/** Delete course section end */
+
+
+
+/** Get all courses start */
+/** Get all courses end */
