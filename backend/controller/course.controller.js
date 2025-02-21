@@ -127,7 +127,6 @@ export const deleteCourse = async (req, res) => {
 /** Delete course section end */
 
 /** Get all courses start */
-
 export const getCourses = async (req, res) => {
   try {
     const courses = await Course.find({});
@@ -144,5 +143,32 @@ export const getCourses = async (req, res) => {
     });
   }
 };
-
 /** Get all courses end */
+
+/** get particular courses details start */
+export const courseDetails = async (req, res) => {
+  const { courseId } = req.params;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not Found",
+        success: false,
+      });
+    }
+    console.log(course);
+    res.status(200).json({
+      message: "course details Found",
+      success: true,
+      data: course,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      message: "Error while accessing particular course details",
+      success: false,
+    });
+  }
+};
+/** get particular courses details end */
