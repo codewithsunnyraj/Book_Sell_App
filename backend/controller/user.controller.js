@@ -102,3 +102,20 @@ export const login = async (req, res) => {
   }
 };
 /* Login routes start End */
+
+/* logout start */
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("jwt");
+    res.status(200).json({
+      message: "Logout successfully",
+      success: true,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: "Error while Logout",
+      success: false,
+    });
+  }
+};
+/* logout end */
