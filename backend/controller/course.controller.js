@@ -65,3 +65,39 @@ export const createCourse = async (req, res) => {
     });
   }
 };
+
+/** Update course start */
+export const updateCourse = async (req, res) => {
+  const { courseId } = req.params;
+
+  const { title, description, price, image } = req.body;
+
+  try {
+    const course = await Course.updateOne(
+      { _id: courseId },
+      {
+        title,
+        description,
+        price,
+        image: {
+          public_id: image?.public_id ,
+          url: image?.url,
+        },
+      }
+    );
+    console.log(course);
+    res.status(200).json({
+      message: "Updated Course Successfully",
+      success: true,
+      data: course,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      message: "Error while Updating data",
+      Error: error,
+      success: false,
+    });
+  }
+};
+/** Update course end */
