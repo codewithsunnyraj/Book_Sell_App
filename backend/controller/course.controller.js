@@ -126,7 +126,23 @@ export const deleteCourse = async (req, res) => {
 };
 /** Delete course section end */
 
-
-
 /** Get all courses start */
+
+export const getCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({});
+    res.status(200).json({
+      message: "Get All Courses",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      messsage: "Error Occur while Accessing all courses",
+      success: false,
+      Error: error,
+    });
+  }
+};
+
 /** Get all courses end */
