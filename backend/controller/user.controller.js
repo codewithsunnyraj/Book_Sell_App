@@ -1,6 +1,7 @@
 import { User } from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
 /** Signup routes start */
 export const signUp = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -63,3 +64,41 @@ export const signUp = async (req, res) => {
   }
 };
 /** Signup routes end */
+
+/* Login routes start Here */
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email: email });
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!user || !isPasswordCorrect) {
+      return res.status(404).json({
+        message: "Invalid Credentials",
+        success: false,
+      });
+    }
+
+    //jwt token
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.cookie("jwt", token);
+    res.status(201).json({
+      message: "Login Successfully",
+      success: true,
+      data: user,
+      token: token,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      message: "Error Occur while Login",
+      success: false,
+    });
+  }
+};
+/* Login routes start End */
