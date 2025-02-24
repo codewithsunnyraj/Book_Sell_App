@@ -1,14 +1,12 @@
-import { User } from "../model/user.model.js";
-import bcrypt from "bcrypt";
 import { z } from "zod";
+import { Admin } from "../model/admin.model.js";
 import jwt from "jsonwebtoken";
-import { Purchase } from "../model/purchase.model.js";
-import { Course } from "../model/course.model.js";
+import bcrypt from "bcrypt";
 /** Signup routes start */
 export const signUp = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
-  const userSchema = z.object({
+  const adminSchema = z.object({
     firstName: z
       .string()
       .min(2, { message: "First name must be atleast 2 characters" }),
@@ -21,7 +19,7 @@ export const signUp = async (req, res) => {
       .min(5, { message: "password must be atleast 5 char long" }),
   });
 
-  const validatedData = userSchema.safeParse(req.body);
+  const validatedData = adminSchema.safeParse(req.body);
   if (!validatedData.success) {
     return res.status(404).json({
       message: "Enter correct value in each fields",
@@ -36,25 +34,25 @@ export const signUp = async (req, res) => {
         success: false,
       });
     }
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await Admin.findOne({ email: email });
     if (existingUser) {
       return res.status(404).json({
-        message: "User already exist",
+        message: "Admin already exist",
         success: false,
       });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const userData = {
+    const adminData = {
       firstName,
       lastName,
       email,
       password: hashedPassword,
     };
-    const newUser = new User(userData);
-    await newUser.save();
+    const newAdmin = new Admin(adminData);
+    await newAdmin.save();
     res.status(200).json({
-      message: "User Register Successfully",
+      message: "Admin Register Successfully",
       success: true,
     });
   } catch (error) {
@@ -71,9 +69,9 @@ export const signUp = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email: email });
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!user || !isPasswordCorrect) {
+    const admin = await Admin.findOne({ email: email });
+    const isPasswordCorrect = await bcrypt.compare(password, admin.password);
+    if (!admin || !isPasswordCorrect) {
       return res.status(404).json({
         message: "Invalid Credentials",
         success: false,
@@ -81,7 +79,7 @@ export const login = async (req, res) => {
     }
 
     //jwt token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: admin._id }, process.env.JWT_ADMIN_PASSWORD, {
       expiresIn: "1d",
     });
     const cookieOptions = {
@@ -127,30 +125,3 @@ export const logout = async (req, res) => {
   }
 };
 /* logout end */
-
-// purchased course detail start
-export const purchased = async (req, res) => {
-  const userId = req.userId;
-  console.log("userIIId", userId);
-  try {
-    const purchaseed = await Purchase.find({ userId });
-    let purchasedCourseId = [];
-
-    for (let i = 0; i < purchaseed.length; i++) {
-      purchasedCourseId.push(purchaseed[i].courseId);
-    }
-    const courseData = await Course.find({ _id: { $in: purchasedCourseId } });
-    res.status(200).json({
-      message: "Display purchased data",
-      success: true,
-      data: purchaseed,
-    });
-  } catch (error) {
-    res.status(404).json({
-      message: "Error while Showing purchased data",
-      success: false,
-      Error: error,
-    });
-  }
-};
-// purchased course detail end
