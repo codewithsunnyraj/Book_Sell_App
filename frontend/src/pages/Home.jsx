@@ -4,9 +4,25 @@ import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import toast from "react-hot-toast";
 const Home = () => {
   const [courses, setCourses] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/user/logout"
+      );
+      toast.success(response.data.message);
+      setIsLoggedIn(false);
+    } catch (error) {
+      toast.error(error.response.data.message || "Error whillllee logging out");
+    }
+  };
+
   console.log(courses);
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -25,7 +41,7 @@ const Home = () => {
     dots: true,
     infinite: false,
     speed: 500,
-    autoplay:true,
+    autoplay: true,
     slidesToShow: 4,
     slidesToScroll: 1,
     initialSlide: 0,
@@ -36,7 +52,7 @@ const Home = () => {
           slidesToShow: 3,
           slidesToScroll: 1,
           infinite: true,
-          autoplay:true,
+          autoplay: true,
           dots: true,
         },
       },
@@ -82,7 +98,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-      
 
       {/* slider part start */}
       <section className="">
@@ -94,7 +109,9 @@ const Home = () => {
                   <img src={items.image.url} className="h-44 " alt="" />
                   <div className="flex justify-center">
                     <div>
-                      <h4 className="text-white text-center py-2">{items.title}</h4>
+                      <h4 className="text-white text-center py-2">
+                        {items.title}
+                      </h4>
                       <button className="bg-orange-500 py-1 px-4 rounded-full">
                         Enroll Now
                       </button>

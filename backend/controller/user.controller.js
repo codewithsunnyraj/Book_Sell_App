@@ -23,11 +23,12 @@ export const signUp = async (req, res) => {
 
   const validatedData = userSchema.safeParse(req.body);
   if (!validatedData.success) {
-    return res.status(404).json({
-      message: "Enter correct value in each fields",
-      success: false,
-      errors: validatedData.error.issues.map((err) => err.message),
-    });
+    return res
+      .status(404)
+      .json({
+        success: false,
+        message: validatedData.error.issues.map((err) => err.message),
+      });
   }
   try {
     if (!firstName || !lastName || !email || !password) {

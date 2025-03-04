@@ -67,9 +67,11 @@ export const signUp = async (req, res) => {
 
 /* Login routes start Here */
 export const login = async (req, res) => {
+  console.log("request test", req.body);
   const { email, password } = req.body;
   try {
     const admin = await Admin.findOne({ email: email });
+    console.log("Exist data",admin);
     const isPasswordCorrect = await bcrypt.compare(password, admin.password);
     if (!admin || !isPasswordCorrect) {
       return res.status(404).json({

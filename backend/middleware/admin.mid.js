@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 function adminMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
-  //   console.log("authheader", authHeader);
+    console.log("authheader", authHeader);
   if (!authHeader || !authHeader.startsWith("Bearer")) {
     return res.status(404).json({ errors: "No token provided" });
   }

@@ -148,6 +148,7 @@ export const getCourses = async (req, res) => {
     res.status(200).json({
       message: "Get All Courses",
       success: true,
+      data: courses,
     });
   } catch (error) {
     console.log(error);

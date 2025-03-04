@@ -8,6 +8,7 @@ import fileUpload from "express-fileupload";
 import adminRoute from "./routes/admin.route.js";
 import { v2 as cloudinary } from "cloudinary";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -20,6 +21,15 @@ app.use(
   })
 );
 /* File upload code end */
+// app.use(
+//   cors({
+//     origin: process.env.FRONTEND_URL,
+//     Credential: true, 
+//     methods: ["GET", "POST", "PUT", "PATCH"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
+app.use(cors());
 const Port = process.env.PORT || 5000;
 
 app.use("/api/v1/course", courseRoute);
